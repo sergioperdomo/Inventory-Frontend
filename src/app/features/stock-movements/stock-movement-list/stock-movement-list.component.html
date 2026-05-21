@@ -1,1 +1,107 @@
-<p>stock-movement-list works!</p>
+<div class="page-header">
+  <h1 class="page-title">Movimientos de Stock</h1>
+  <button mat-raised-button color="primary">
+    <mat-icon>add</mat-icon>
+    Registrar Movimiento
+  </button>
+</div>
+
+<!-- Tarjetas resumen -->
+<div class="summary-cards">
+  <div class="card card-entrada">
+    <mat-icon>arrow_downward</mat-icon>
+    <div class="card-info">
+      <span class="card-label">Total Entradas</span>
+      <span class="card-value">{{ totalEntradas() }}</span>
+    </div>
+  </div>
+  <div class="card card-salida">
+    <mat-icon>arrow_upward</mat-icon>
+    <div class="card-info">
+      <span class="card-label">Total Salidas</span>
+      <span class="card-value">{{ totalSalidas() }}</span>
+    </div>
+  </div>
+  <div class="card card-total">
+    <mat-icon>swap_vert</mat-icon>
+    <div class="card-info">
+      <span class="card-label">Total Movimientos</span>
+      <span class="card-value">{{ movements().length }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Filtro por tipo -->
+<mat-form-field appearance="outline" class="filter-field">
+  <mat-label>Filtrar por tipo</mat-label>
+  <mat-select [ngModel]="filterType()" (ngModelChange)="onFilterType($event)">
+    <mat-option value="ALL">Todos</mat-option>
+    <mat-option [value]="MovementType.ENTRADA">Entradas</mat-option>
+    <mat-option [value]="MovementType.SALIDA">Salidas</mat-option>
+  </mat-select>
+</mat-form-field>
+
+@if (loading()) {
+  <div class="loading">Cargando movimientos...</div>
+} @else {
+  <table mat-table [dataSource]="filteredMovements()" class="mat-elevation-z2">
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Tipo</th>
+      <td mat-cell *matCellDef="let m">
+        @if (m.type === MovementType.ENTRADA) {
+          <span class="chip chip-entrada">
+            <mat-icon>arrow_downward</mat-icon>
+            Entrada
+          </span>
+        } @else {
+          <span class="chip chip-salida">
+            <mat-icon>arrow_upward</mat-icon>
+            Salida
+          </span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="productName">
+      <th mat-header-cell *matHeaderCellDef>Producto</th>
+      <td mat-cell *matCellDef="let m">{{ m.productName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="quantity">
+      <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+      <td mat-cell *matCellDef="let m">
+        <strong [class.text-entrada]="m.type === MovementType.ENTRADA"
+                [class.text-salida]="m.type === MovementType.SALIDA">
+          {{ m.type === MovementType.ENTRADA ? '+' : '-' }}{{ m.quantity }}
+        </strong>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="notes">
+      <th mat-header-cell *matHeaderCellDef>Notas</th>
+      <td mat-cell *matCellDef="let m">{{ m.notes ?? '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef>Fecha</th>
+      <td mat-cell *matCellDef="let m">
+        {{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        [class.row-entrada]="row.type === MovementType.ENTRADA"
+        [class.row-salida]="row.type === MovementType.SALIDA">
+    </tr>
+
+  </table>
+
+  @if (filteredMovements().length === 0) {
+    <div class="empty-state">
+      <mat-icon>swap_vert</mat-icon>
+      <p>No se encontraron movimientos</p>
+    </div>
+  }
+}

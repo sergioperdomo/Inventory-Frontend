@@ -1,0 +1,129 @@
+.dashboard-title {
+  margin-bottom: 24px;
+}
+
+.dashboard-title h1 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: #1e293b;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.metric-card.alert {
+  border-color: #fca5a5;
+  background: #fff5f5;
+}
+
+.metric-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.metric-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.metric-icon mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.blue   { background: #dbeafe; color: #2563eb; }
+.green  { background: #dcfce7; color: #16a34a; }
+.purple { background: #ede9fe; color: #7c3aed; }
+.orange { background: #ffedd5; color: #ea580c; }
+.teal   { background: #ccfbf1; color: #0d9488; }
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.metric-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.section-card {
+  border-radius: 12px !important;
+}
+
+.inner-table {
+  width: 100%;
+}
+
+.icon-warn { color: #ea580c; }
+.icon-info { color: #2563eb; }
+
+.chip {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.chip-entrada { background: #dcfce7; color: #16a34a; }
+.chip-salida  { background: #fee2e2; color: #dc2626; }
+
+.text-entrada { color: #16a34a; }
+.text-salida  { color: #dc2626; }
+.text-danger  { color: #dc2626; font-weight: 600; }
+
+.empty-section {
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
+}
+
+.empty-section mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+}
