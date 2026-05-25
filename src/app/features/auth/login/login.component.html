@@ -1,0 +1,64 @@
+<div class="login-container">
+  <div class="login-card">
+
+    <div class="login-header">
+      <mat-icon class="logo-icon">inventory_2</mat-icon>
+      <h1>Inventario</h1>
+      <p>Inicia sesión para continuar</p>
+    </div>
+
+    <form [formGroup]="form" class="login-form" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Usuario</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput formControlName="username" placeholder="Ej: admin">
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <mat-error>El usuario es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input matInput
+               formControlName="password"
+               [type]="hidePassword() ? 'password' : 'text'">
+        <button mat-icon-button matSuffix type="button"
+                (click)="togglePassword()">
+          <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <mat-error>La contraseña es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      @if (errorMessage()) {
+        <div class="error-banner">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <button mat-raised-button
+              color="primary"
+              class="full-width submit-btn"
+              type="submit"
+              [disabled]="form.invalid || loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Iniciar sesión
+        }
+      </button>
+
+    </form>
+
+    <div class="login-footer">
+      <p>Usuarios de prueba:</p>
+      <code>admin / admin123 → ADMIN</code>
+      <code>empleado1 / emp123 → EMPLOYEE</code>
+    </div>
+
+  </div>
+</div>

@@ -49,3 +49,41 @@
   padding: 24px;
   flex: 1;
 }
+
+.sidenav-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 12px 16px;
+  border-top: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+}
+
+.user-info mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.username {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+}
+
+.role {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+}
