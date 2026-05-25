@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar Categoría' : 'Nueva Categoría' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Electrónica">
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <mat-error>{{ nameError }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput
+                formControlName="description"
+                rows="3"
+                placeholder="Descripción opcional...">
+      </textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="form.invalid"
+          (click)="onSubmit()">
+    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

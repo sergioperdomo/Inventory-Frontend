@@ -10,6 +10,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { FormsModule } from '@angular/forms';
 import { CategoryService } from '../../../core/services';
 import { Category } from '../../../core/models/category.model';
+import { MatDialog } from '@angular/material/dialog';
+import { CategoryDialogComponent } from '../category-dialog/category-dialog/category-dialog.component';
 
 @Component({
   selector: 'app-category-list',
@@ -22,14 +24,14 @@ import { Category } from '../../../core/models/category.model';
     MatFormFieldModule,
     MatTooltipModule,
     MatBadgeModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './category-list.component.html',
-  styleUrl: './category-list.component.css'
+  styleUrl: './category-list.component.css',
 })
 export class CategoryListComponent implements OnInit {
-
-private readonly categoryService = inject(CategoryService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly dialog = inject(MatDialog);
 
   readonly categories = signal<Category[]>([]);
   readonly loading = signal<boolean>(false);
@@ -38,16 +40,19 @@ private readonly categoryService = inject(CategoryService);
   readonly filteredCategories = computed(() => {
     const term = this.searchTerm().toLowerCase();
     if (!term) return this.categories();
-    return this.categories().filter(c =>
-      c.name.toLowerCase().includes(term)
-    );
+    return this.categories().filter((c) => c.name.toLowerCase().includes(term));
   });
 
   readonly totalProducts = computed(() =>
-    this.categories().reduce((acc, c) => acc + c.productCount, 0)
+    this.categories().reduce((acc, c) => acc + c.productCount, 0),
   );
 
-  readonly displayedColumns = ['name', 'description', 'productCount', 'actions'];
+  readonly displayedColumns = [
+    'name',
+    'description',
+    'productCount',
+    'actions',
+  ];
 
   ngOnInit(): void {
     this.loadCategories();
@@ -63,7 +68,7 @@ private readonly categoryService = inject(CategoryService);
       error: (err) => {
         console.error('Error cargando categorías', err);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -71,14 +76,33 @@ private readonly categoryService = inject(CategoryService);
     this.searchTerm.set(term);
   }
 
+  openDialog(category: Category | null = null): void {
+    const dialogRef = this.dialog.open(CategoryDialogComponent, {
+      data: category,
+      width: '480px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      if (category) {
+        // Edición: reemplaza el elemento en el signal
+        this.categories.update((list) =>
+          list.map((c) => (c.id === result.id ? result : c)),
+        );
+      } else {
+        // Creación: agrega al signal
+        this.categories.update((list) => [...list, result]);
+      }
+    });
+  }
+
   delete(id: number): void {
     if (!confirm('¿Estás seguro de eliminar esta categoría?')) return;
     this.categoryService.delete(id).subscribe({
       next: () => {
-        this.categories.update(list => list.filter(c => c.id !== id));
+        this.categories.update((list) => list.filter((c) => c.id !== id));
       },
-      error: (err) => console.error('Error eliminando categoría', err)
+      error: (err) => console.error('Error eliminando categoría', err),
     });
   }
-
 }

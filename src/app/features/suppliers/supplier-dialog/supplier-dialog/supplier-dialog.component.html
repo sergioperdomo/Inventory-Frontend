@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre de la empresa</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: TechCorp S.A.">
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <mat-error>{{ getError('name') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre del contacto</mat-label>
+      <input matInput formControlName="contactName" placeholder="Ej: Juan Pérez">
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="contacto@empresa.com">
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <mat-error>{{ getError('email') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="phone" placeholder="Ej: 555-0100">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Dirección</mat-label>
+      <input matInput formControlName="address" placeholder="Dirección opcional...">
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="form.invalid"
+          (click)="onSubmit()">
+    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

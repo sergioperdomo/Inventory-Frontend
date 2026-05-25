@@ -1,0 +1,90 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar Producto' : 'Nuevo Producto' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Laptop Dell Inspiron">
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <mat-error>{{ getError('name') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="2"
+                placeholder="Descripción opcional...">
+      </textarea>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>SKU</mat-label>
+        <input matInput formControlName="sku" placeholder="Ej: PROD-001">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Precio</mat-label>
+        <span matPrefix>$&nbsp;</span>
+        <input matInput type="number" formControlName="price" placeholder="0">
+        @if (form.get('price')?.invalid && form.get('price')?.touched) {
+          <mat-error>{{ getError('price') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Stock actual</mat-label>
+        <input matInput type="number" formControlName="stockQuantity">
+        @if (form.get('stockQuantity')?.invalid && form.get('stockQuantity')?.touched) {
+          <mat-error>{{ getError('stockQuantity') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Stock mínimo (alerta)</mat-label>
+        <input matInput type="number" formControlName="minStockAlert">
+        @if (form.get('minStockAlert')?.invalid && form.get('minStockAlert')?.touched) {
+          <mat-error>{{ getError('minStockAlert') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="categoryId">
+          <mat-option [value]="null">Sin categoría</mat-option>
+          @for (cat of categories(); track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Proveedor</mat-label>
+        <mat-select formControlName="supplierId">
+          <mat-option [value]="null">Sin proveedor</mat-option>
+          @for (sup of suppliers(); track sup.id) {
+            <mat-option [value]="sup.id">{{ sup.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="form.invalid"
+          (click)="onSubmit()">
+    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

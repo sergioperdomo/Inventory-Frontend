@@ -10,13 +10,16 @@ import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProductDialogComponent } from './product-dialog/product-dialog/product-dialog.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css',
-  imports: [MatTableModule,
+  imports: [
+    MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatInputModule,
@@ -24,33 +27,36 @@ import { ProductService } from '../../../core/services/product.service';
     MatChipsModule,
     MatTooltipModule,
     FormsModule,
-    CurrencyPipe],
+    CurrencyPipe,
+  ],
 })
 export class ProductListComponent implements OnInit {
   private readonly productService = inject(ProductService);
+  private readonly dialog = inject(MatDialog);
 
-  // Signals
   readonly products = signal<Product[]>([]);
   readonly loading = signal<boolean>(false);
   readonly searchTerm = signal<string>('');
 
-  // Computed — filtra productos por nombre en tiempo real
   readonly filteredProducts = computed(() => {
     const term = this.searchTerm().toLowerCase();
     if (!term) return this.products();
-    return this.products().filter(p =>
-      p.name.toLowerCase().includes(term)
-    );
+    return this.products().filter((p) => p.name.toLowerCase().includes(term));
   });
 
-  // Computed — cuenta productos con stock bajo
-  readonly lowStockCount = computed(() =>
-    this.products().filter(p => p.lowStock).length
+  readonly lowStockCount = computed(
+    () => this.products().filter((p) => p.lowStock).length,
   );
 
   readonly displayedColumns = [
-    'sku', 'name', 'category', 'supplier',
-    'price', 'stock', 'status', 'actions'
+    'sku',
+    'name',
+    'category',
+    'supplier',
+    'price',
+    'stock',
+    'status',
+    'actions',
   ];
 
   ngOnInit(): void {
@@ -67,7 +73,7 @@ export class ProductListComponent implements OnInit {
       error: (err) => {
         console.error('Error cargando productos', err);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -75,14 +81,31 @@ export class ProductListComponent implements OnInit {
     this.searchTerm.set(term);
   }
 
+  openDialog(product: Product | null = null): void {
+    const dialogRef = this.dialog.open(ProductDialogComponent, {
+      data: product,
+      width: '560px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      if (product) {
+        this.products.update((list) =>
+          list.map((p) => (p.id === result.id ? result : p)),
+        );
+      } else {
+        this.products.update((list) => [...list, result]);
+      }
+    });
+  }
+
   deleteProduct(id: number): void {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
     this.productService.delete(id).subscribe({
       next: () => {
-        this.products.update(list => list.filter(p => p.id !== id));
+        this.products.update((list) => list.filter((p) => p.id !== id));
       },
-      error: (err) => console.error('Error eliminando producto', err)
+      error: (err) => console.error('Error eliminando producto', err),
     });
   }
-
 }

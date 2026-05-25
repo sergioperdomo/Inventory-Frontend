@@ -7,7 +7,9 @@ export interface Product {
   stockQuantity: number;
   minStockAlert: number;
   lowStock: boolean;
+  categoryId: number | null;
   categoryName: string;
+  supplierId: number | null;
   supplierName: string;
 }
 
@@ -31,6 +33,8 @@ export const PRODUCT_FIELD_LABELS: Record<keyof Product, string> = {
   stockQuantity: 'Stock',
   minStockAlert: 'Stock mínimo',
   lowStock: 'Stock bajo',
+  categoryId: 'ID Categoría',
   categoryName: 'Categoría',
+  supplierId: 'ID Proveedor',
   supplierName: 'Proveedor'
 };
