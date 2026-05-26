@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class StockMovementService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/stock-movements';
+  private readonly apiUrl = '/api/stock-movements';
 
   getAll(): Observable<StockMovement[]> {
     return this.http.get<StockMovement[]>(this.apiUrl);

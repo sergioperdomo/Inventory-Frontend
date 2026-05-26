@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class CategoryService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/categories';
+  private readonly apiUrl = '/api/categories';
 
   getAll(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrl);

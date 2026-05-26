@@ -9,7 +9,7 @@ import { Supplier, SupplierRequest } from '../models';
 export class SupplierService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/suppliers';
+  private readonly apiUrl = '/api/suppliers';
 
   getAll(): Observable<Supplier[]> {
     return this.http.get<Supplier[]>(this.apiUrl);
