@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CategoryService } from '../../../../core/services';
+import { CategoryService, NotificationService } from '../../../../core/services';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
@@ -27,6 +27,7 @@ import { Category } from '../../../../core/models/category.model';
   styleUrl: './category-dialog.component.css',
 })
 export class CategoryDialogComponent {
+  private readonly notification = inject(NotificationService);
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<CategoryDialogComponent>);
   private readonly categoryService = inject(CategoryService);
@@ -64,9 +65,16 @@ export class CategoryDialogComponent {
       : this.categoryService.create(request);
 
     operation$.subscribe({
-      next: (result) => this.dialogRef.close(result),
-      error: (err) => console.error('Error guardando categoría', err),
-    });
+    next: (result) => {
+      this.notification.success(
+        this.isEditMode ? 'Categoría actualizada correctamente' : 'Categoría creada correctamente'
+      );
+      this.dialogRef.close(result);
+    },
+    error: () => {
+      this.notification.error('Error al guardar la categoría');
+    }
+  });
   }
 
   onCancel(): void {

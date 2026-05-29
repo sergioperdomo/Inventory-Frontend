@@ -6,6 +6,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 interface NavItem {
   label: string;
@@ -28,7 +29,8 @@ interface NavItem {
     MatListModule,
     MatIconModule,
     MatButtonModule,
-  ],
+    NgxSpinnerModule
+],
 })
 export class LayoutComponent {
   readonly authService = inject(AuthService);
