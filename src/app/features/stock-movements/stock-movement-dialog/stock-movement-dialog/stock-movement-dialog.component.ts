@@ -104,10 +104,7 @@ export class StockMovementDialogComponent implements OnInit {
         this.notification.success('Movimiento registrado correctamente');
         this.dialogRef.close(result);
       },
-      error: () =>
-        this.notification.error(
-          'Error al registrar el movimiento — verifica el stock disponible',
-        ),
+      error: () => {}
     });
   }
 

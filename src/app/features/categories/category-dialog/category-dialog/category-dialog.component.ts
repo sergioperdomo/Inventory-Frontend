@@ -1,6 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CategoryService, NotificationService } from '../../../../core/services';
+import {
+  CategoryService,
+  NotificationService,
+} from '../../../../core/services';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
@@ -65,16 +68,12 @@ export class CategoryDialogComponent {
       : this.categoryService.create(request);
 
     operation$.subscribe({
-    next: (result) => {
-      this.notification.success(
-        this.isEditMode ? 'Categoría actualizada correctamente' : 'Categoría creada correctamente'
-      );
-      this.dialogRef.close(result);
-    },
-    error: () => {
-      this.notification.error('Error al guardar la categoría');
-    }
-  });
+      next: (result) => {
+        this.notification.success('Categoría creada correctamente');
+        this.dialogRef.close(result);
+      },
+      error: () => {}, // el interceptor ya maneja el error
+    });
   }
 
   onCancel(): void {

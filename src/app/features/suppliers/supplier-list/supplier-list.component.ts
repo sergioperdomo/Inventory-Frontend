@@ -110,10 +110,7 @@ export class SupplierListComponent implements OnInit {
         this.suppliers.update((list) => list.filter((s) => s.id !== id));
         this.notification.success('Proveedor eliminado correctamente');
       },
-      error: (err) => {
-        console.error('Error eliminando proveedor', err);
-        this.notification.error('No se puede eliminar un proveedor con productos asociados');
-      },
+      error: (err) => {},
     });
   }
 }
