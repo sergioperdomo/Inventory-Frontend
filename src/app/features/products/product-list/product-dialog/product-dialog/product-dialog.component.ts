@@ -40,7 +40,6 @@ export class ProductDialogComponent implements OnInit {
   private readonly supplierService = inject(SupplierService);
   private readonly notification = inject(NotificationService);
 
-
   readonly data: Product | null = inject(MAT_DIALOG_DATA);
   readonly isEditMode = !!this.data;
 
@@ -106,10 +105,15 @@ export class ProductDialogComponent implements OnInit {
       : this.productService.create(request);
 
     operation$.subscribe({
-      next: (result) => this.dialogRef.close(result),
-      error: () => {
-        this.notification.error('Error guardando producto');
+      next: (result) => {
+        this.notification.success(
+          this.isEditMode
+            ? 'Producto actualizado correctamente'
+            : 'Producto creado correctamente',
+        );
+        this.dialogRef.close(result);
       },
+      error: () => {},
     });
   }
 

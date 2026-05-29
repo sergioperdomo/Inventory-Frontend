@@ -108,7 +108,7 @@ export class ProductListComponent implements OnInit {
         this.products.update((list) => list.filter((p) => p.id !== id));
         this.notification.success('Producto eliminado correctamente');
       },
-      error: () => this.notification.error('Error al eliminar el producto'),
+      error: () => {}
     });
   }
 }

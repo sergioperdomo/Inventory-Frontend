@@ -104,9 +104,7 @@ export class CategoryListComponent implements OnInit {
         this.categories.update((list) => list.filter((c) => c.id !== id));
         this.notification.success('Categoría eliminada correctamente');
       },
-      error: () => {
-        this.notification.error('No se puede eliminar una categoría con productos asociados');
-      },
+      error: () => {},
     });
   }
 }

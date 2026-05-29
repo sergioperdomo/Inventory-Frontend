@@ -83,7 +83,7 @@ export class SupplierDialogComponent {
         );
         this.dialogRef.close(result);
       },
-      error: () => this.notification.error('Error al guardar el proveedor'),
+      error: () => {}
     });
   }
 
