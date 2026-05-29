@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { FormsModule } from '@angular/forms';
-import { CategoryService } from '../../../core/services';
+import { CategoryService, NotificationService } from '../../../core/services';
 import { Category } from '../../../core/models/category.model';
 import { MatDialog } from '@angular/material/dialog';
 import { CategoryDialogComponent } from '../category-dialog/category-dialog/category-dialog.component';
@@ -25,11 +25,12 @@ import { CategoryDialogComponent } from '../category-dialog/category-dialog/cate
     MatTooltipModule,
     MatBadgeModule,
     FormsModule,
-  ],
+],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.css',
 })
 export class CategoryListComponent implements OnInit {
+  private readonly notification = inject(NotificationService);
   private readonly categoryService = inject(CategoryService);
   private readonly dialog = inject(MatDialog);
 
@@ -65,8 +66,8 @@ export class CategoryListComponent implements OnInit {
         this.categories.set(data);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error cargando categorías', err);
+      error: () => {
+        this.notification.error('Error cargando categorías');
         this.loading.set(false);
       },
     });
@@ -101,8 +102,11 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.delete(id).subscribe({
       next: () => {
         this.categories.update((list) => list.filter((c) => c.id !== id));
+        this.notification.success('Categoría eliminada correctamente');
       },
-      error: (err) => console.error('Error eliminando categoría', err),
+      error: () => {
+        this.notification.error('No se puede eliminar una categoría con productos asociados');
+      },
     });
   }
 }

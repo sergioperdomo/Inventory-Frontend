@@ -16,6 +16,7 @@ import { CategoryService } from '../../../../../core/services/category.service';
 import { SupplierService } from '../../../../../core/services/supplier.service';
 import { Category } from '../../../../../core/models/category.model';
 import { Supplier } from '../../../../../core/models/supplier.model';
+import { NotificationService } from '../../../../../core/services';
 
 @Component({
   selector: 'app-product-dialog',
@@ -37,6 +38,8 @@ export class ProductDialogComponent implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly categoryService = inject(CategoryService);
   private readonly supplierService = inject(SupplierService);
+  private readonly notification = inject(NotificationService);
+
 
   readonly data: Product | null = inject(MAT_DIALOG_DATA);
   readonly isEditMode = !!this.data;
@@ -104,7 +107,9 @@ export class ProductDialogComponent implements OnInit {
 
     operation$.subscribe({
       next: (result) => this.dialogRef.close(result),
-      error: (err) => console.error('Error guardando producto', err),
+      error: () => {
+        this.notification.error('Error guardando producto');
+      },
     });
   }
 

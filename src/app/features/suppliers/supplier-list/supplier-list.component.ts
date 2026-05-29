@@ -17,6 +17,7 @@ import { SupplierService } from '../../../core/services/supplier.service';
 import { Supplier } from '../../../core/models';
 import { SupplierDialogComponent } from '../supplier-dialog/supplier-dialog/supplier-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-supplier-list',
@@ -30,13 +31,14 @@ import { MatDialog } from '@angular/material/dialog';
     MatFormFieldModule,
     MatTooltipModule,
     FormsModule,
-  ],
+],
   templateUrl: './supplier-list.component.html',
   styleUrl: './supplier-list.component.css',
 })
 export class SupplierListComponent implements OnInit {
   private readonly supplierService = inject(SupplierService);
   private readonly dialog = inject(MatDialog);
+  private readonly notification = inject(NotificationService);
 
   readonly suppliers = signal<Supplier[]>([]);
   readonly loading = signal<boolean>(false);
@@ -106,8 +108,12 @@ export class SupplierListComponent implements OnInit {
     this.supplierService.delete(id).subscribe({
       next: () => {
         this.suppliers.update((list) => list.filter((s) => s.id !== id));
+        this.notification.success('Proveedor eliminado correctamente');
       },
-      error: (err) => console.error('Error eliminando proveedor', err),
+      error: (err) => {
+        console.error('Error eliminando proveedor', err);
+        this.notification.error('No se puede eliminar un proveedor con productos asociados');
+      },
     });
   }
 }

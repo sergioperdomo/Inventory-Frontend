@@ -33,7 +33,7 @@ import { StockMovementDialogComponent } from '../stock-movement-dialog/stock-mov
     MatChipsModule,
     FormsModule,
     DatePipe,
-  ],
+],
   templateUrl: './stock-movement-list.component.html',
   styleUrl: './stock-movement-list.component.css',
 })

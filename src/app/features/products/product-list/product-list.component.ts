@@ -12,6 +12,7 @@ import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductDialogComponent } from './product-dialog/product-dialog/product-dialog.component';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-product-list',
@@ -28,10 +29,11 @@ import { ProductDialogComponent } from './product-dialog/product-dialog/product-
     MatTooltipModule,
     FormsModule,
     CurrencyPipe,
-  ],
+],
 })
 export class ProductListComponent implements OnInit {
   private readonly productService = inject(ProductService);
+  private readonly notification = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   readonly products = signal<Product[]>([]);
@@ -71,7 +73,7 @@ export class ProductListComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error cargando productos', err);
+        this.notification.error('Error cargando productos');
         this.loading.set(false);
       },
     });
@@ -104,8 +106,9 @@ export class ProductListComponent implements OnInit {
     this.productService.delete(id).subscribe({
       next: () => {
         this.products.update((list) => list.filter((p) => p.id !== id));
+        this.notification.success('Producto eliminado correctamente');
       },
-      error: (err) => console.error('Error eliminando producto', err),
+      error: () => this.notification.error('Error al eliminar el producto'),
     });
   }
 }

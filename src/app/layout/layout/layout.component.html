@@ -1,4 +1,5 @@
 <mat-sidenav-container class="sidenav-container">
+
   <!-- Sidebar -->
   <mat-sidenav mode="side" opened class="sidenav">
     <div class="sidenav-header">
@@ -8,24 +9,20 @@
 
     <mat-nav-list>
       @for (item of navItems; track item.route) {
-        <a
-          mat-list-item
-          [routerLink]="item.route"
-          routerLinkActive="active-link"
-        >
+        <a mat-list-item
+           [routerLink]="item.route"
+           routerLinkActive="active-link">
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
           <span matListItemTitle>{{ item.label }}</span>
         </a>
       }
     </mat-nav-list>
-    <!-- Usuario y logout al fondo del sidebar -->
+
     <div class="sidenav-footer">
       <div class="user-info">
         <mat-icon>account_circle</mat-icon>
         <div>
-          <span class="username">{{
-            authService.currentUser()?.username
-          }}</span>
+          <span class="username">{{ authService.currentUser()?.username }}</span>
           <span class="role">{{ authService.currentUser()?.role }}</span>
         </div>
       </div>
@@ -44,4 +41,15 @@
       <router-outlet />
     </div>
   </mat-sidenav-content>
+
 </mat-sidenav-container>
+
+<!-- Spinner global -->
+<ngx-spinner
+  bdColor="rgba(0,0,0,0.4)"
+  size="medium"
+  color="#fff"
+  type="ball-scale-multiple"
+  [fullScreen]="true">
+  <p style="color: white; margin-top: 16px; font-size: 14px;">Cargando...</p>
+</ngx-spinner>

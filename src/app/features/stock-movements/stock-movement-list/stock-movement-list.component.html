@@ -45,7 +45,6 @@
   <div class="loading">Cargando movimientos...</div>
 } @else {
   <table mat-table [dataSource]="filteredMovements()" class="mat-elevation-z2">
-
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Tipo</th>
       <td mat-cell *matCellDef="let m">
@@ -71,31 +70,34 @@
     <ng-container matColumnDef="quantity">
       <th mat-header-cell *matHeaderCellDef>Cantidad</th>
       <td mat-cell *matCellDef="let m">
-        <strong [class.text-entrada]="m.type === MovementType.ENTRADA"
-                [class.text-salida]="m.type === MovementType.SALIDA">
-          {{ m.type === MovementType.ENTRADA ? '+' : '-' }}{{ m.quantity }}
+        <strong
+          [class.text-entrada]="m.type === MovementType.ENTRADA"
+          [class.text-salida]="m.type === MovementType.SALIDA"
+        >
+          {{ m.type === MovementType.ENTRADA ? "+" : "-" }}{{ m.quantity }}
         </strong>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="notes">
       <th mat-header-cell *matHeaderCellDef>Notas</th>
-      <td mat-cell *matCellDef="let m">{{ m.notes ?? '—' }}</td>
+      <td mat-cell *matCellDef="let m">{{ m.notes ?? "—" }}</td>
     </ng-container>
 
     <ng-container matColumnDef="createdAt">
       <th mat-header-cell *matHeaderCellDef>Fecha</th>
       <td mat-cell *matCellDef="let m">
-        {{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}
+        {{ m.createdAt | date: "dd/MM/yyyy HH:mm" }}
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-        [class.row-entrada]="row.type === MovementType.ENTRADA"
-        [class.row-salida]="row.type === MovementType.SALIDA">
-    </tr>
-
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      [class.row-entrada]="row.type === MovementType.ENTRADA"
+      [class.row-salida]="row.type === MovementType.SALIDA"
+    ></tr>
   </table>
 
   @if (filteredMovements().length === 0) {
