@@ -1,57 +1,52 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   CategoryService,
   NotificationService,
 } from '../../../../core/services';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { Category } from '../../../../core/models/category.model';
 
 @Component({
   selector: 'app-category-dialog',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [ReactiveFormsModule],
   templateUrl: './category-dialog.component.html',
   styleUrl: './category-dialog.component.css',
 })
 export class CategoryDialogComponent {
-  private readonly notification = inject(NotificationService);
   private readonly fb = inject(FormBuilder);
-  private readonly dialogRef = inject(MatDialogRef<CategoryDialogComponent>);
   private readonly categoryService = inject(CategoryService);
+  private readonly notification = inject(NotificationService);
 
-  // MAT_DIALOG_DATA contiene la categoría si es edición, null si es creación
-  readonly data: Category | null = inject(MAT_DIALOG_DATA);
+  readonly category = input<Category | null>(null);
+  readonly saved = output<Category>();
+  readonly closed = output<void>();
 
-  readonly isEditMode = !!this.data;
+  get isEditMode(): boolean {
+    return !!this.category();
+  }
 
   readonly form = this.fb.group({
-    name: [
-      this.data?.name ?? '',
-      [Validators.required, Validators.maxLength(100)],
-    ],
-    description: [this.data?.description ?? '', Validators.maxLength(255)],
+    name: ['', [Validators.required, Validators.maxLength(100)]],
+    description: ['', Validators.maxLength(255)],
   });
 
-  get nameError(): string {
-    const ctrl = this.form.get('name')!;
-    if (ctrl.hasError('required')) return 'El nombre es obligatorio';
-    if (ctrl.hasError('maxlength')) return 'Máximo 100 caracteres';
+  ngOnInit(): void {
+    const c = this.category();
+    if (c) {
+      this.form.patchValue({
+        name: c.name,
+        description: c.description,
+      });
+    }
+  }
+
+  getError(field: string): string {
+    const ctrl = this.form.get(field)!;
+    if (ctrl.hasError('required')) return 'Este campo es obligatorio';
+    if (ctrl.hasError('maxlength'))
+      return `Máximo ${ctrl.errors?.['maxlength'].requiredLength} caracteres`;
     return '';
   }
 
@@ -64,19 +59,23 @@ export class CategoryDialogComponent {
     };
 
     const operation$ = this.isEditMode
-      ? this.categoryService.update(this.data!.id, request)
+      ? this.categoryService.update(this.category()!.id, request)
       : this.categoryService.create(request);
 
     operation$.subscribe({
       next: (result) => {
-        this.notification.success('Categoría creada correctamente');
-        this.dialogRef.close(result);
+        this.notification.success(
+          this.isEditMode
+            ? 'Categoría actualizada correctamente'
+            : 'Categoría creada correctamente',
+        );
+        this.saved.emit(result);
       },
-      error: () => {}, // el interceptor ya maneja el error
+      error: () => {},
     });
   }
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.closed.emit();
   }
 }

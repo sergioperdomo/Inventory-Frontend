@@ -1,109 +1,176 @@
-<div class="page-header">
-  <h1 class="page-title">Movimientos de Stock</h1>
-  <button mat-raised-button color="primary" (click)="openDialog()">
-    <mat-icon>add</mat-icon>
-    Registrar Movimiento
-  </button>
-</div>
+<div class="space-y-6">
 
-<!-- Tarjetas resumen -->
-<div class="summary-cards">
-  <div class="card card-entrada">
-    <mat-icon>arrow_downward</mat-icon>
-    <div class="card-info">
-      <span class="card-label">Total Entradas</span>
-      <span class="card-value">{{ totalEntradas() }}</span>
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Movimientos de Stock</h1>
+      <p class="text-slate-400 text-sm mt-1">
+        {{ filteredMovements().length }} movimientos registrados
+      </p>
+    </div>
+    <button (click)="openDialog()"
+            class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500
+                   text-white px-4 py-2.5 rounded-xl font-medium text-sm
+                   transition-all duration-200">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Registrar Movimiento
+    </button>
+  </div>
+
+  <!-- Tarjetas resumen -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    <div class="bg-slate-800 rounded-xl p-5 border border-slate-700/50">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 16V4m0 0L3 8m4-4l4 4"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs">Total Entradas</p>
+          <p class="text-2xl font-bold text-emerald-400">{{ totalEntradas() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 rounded-xl p-5 border border-slate-700/50">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 8V20m0 0l4-4m-4 4l-4-4"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs">Total Salidas</p>
+          <p class="text-2xl font-bold text-red-400">{{ totalSalidas() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 rounded-xl p-5 border border-slate-700/50">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs">Total Movimientos</p>
+          <p class="text-2xl font-bold text-white">{{ movements().length }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Filtro -->
+  <div class="flex items-center gap-2">
+    <span class="text-slate-400 text-sm">Filtrar:</span>
+    <div class="flex gap-2">
+      <button (click)="onFilterType('ALL')"
+              [class]="filterType() === 'ALL'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
+        Todos
+      </button>
+      <button (click)="onFilterType(MovementType.ENTRADA)"
+              [class]="filterType() === MovementType.ENTRADA
+                ? 'bg-emerald-600 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
+        Entradas
+      </button>
+      <button (click)="onFilterType(MovementType.SALIDA)"
+              [class]="filterType() === MovementType.SALIDA
+                ? 'bg-red-600 text-white'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'"
+              class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
+        Salidas
+      </button>
     </div>
   </div>
-  <div class="card card-salida">
-    <mat-icon>arrow_upward</mat-icon>
-    <div class="card-info">
-      <span class="card-label">Total Salidas</span>
-      <span class="card-value">{{ totalSalidas() }}</span>
-    </div>
+
+  <!-- Tabla -->
+  <div class="bg-slate-800 rounded-xl border border-slate-700/50 overflow-hidden">
+    @if (loading()) {
+      <div class="flex items-center justify-center py-16 text-slate-500">
+        <svg class="animate-spin w-6 h-6 mr-3 text-indigo-400" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+        <span>Cargando movimientos...</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-slate-700/50">
+              <th class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Tipo</th>
+              <th class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Producto</th>
+              <th class="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3">Cantidad</th>
+              <th class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3 hidden md:table-cell">Notas</th>
+              <th class="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3">Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (movement of filteredMovements(); track movement.id) {
+              <tr [class]="'border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors ' +
+                           (movement.type === MovementType.ENTRADA ? 'hover:bg-emerald-900/10' : 'hover:bg-red-900/10')">
+                <td class="px-5 py-3">
+                  @if (movement.type === MovementType.ENTRADA) {
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+                                 text-xs font-medium bg-emerald-500/20 text-emerald-400">
+                      ↓ Entrada
+                    </span>
+                  } @else {
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+                                 text-xs font-medium bg-red-500/20 text-red-400">
+                      ↑ Salida
+                    </span>
+                  }
+                </td>
+                <td class="px-5 py-3 text-sm text-white">{{ movement.productName }}</td>
+                <td class="px-5 py-3 text-sm text-right font-semibold"
+                    [class]="movement.type === MovementType.ENTRADA ? 'text-emerald-400' : 'text-red-400'">
+                  {{ movement.type === MovementType.ENTRADA ? '+' : '-' }}{{ movement.quantity }}
+                </td>
+                <td class="px-5 py-3 text-sm text-slate-400 hidden md:table-cell">
+                  {{ movement.notes || '—' }}
+                </td>
+                <td class="px-5 py-3 text-xs text-slate-400 text-right">
+                  {{ movement.createdAt | date:'dd/MM/yy HH:mm' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (filteredMovements().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 text-slate-500">
+          <svg class="w-12 h-12 mb-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+          </svg>
+          <p class="text-sm">No se encontraron movimientos</p>
+        </div>
+      }
+    }
   </div>
-  <div class="card card-total">
-    <mat-icon>swap_vert</mat-icon>
-    <div class="card-info">
-      <span class="card-label">Total Movimientos</span>
-      <span class="card-value">{{ movements().length }}</span>
-    </div>
-  </div>
-</div>
 
-<!-- Filtro por tipo -->
-<mat-form-field appearance="outline" class="filter-field">
-  <mat-label>Filtrar por tipo</mat-label>
-  <mat-select [ngModel]="filterType()" (ngModelChange)="onFilterType($event)">
-    <mat-option value="ALL">Todos</mat-option>
-    <mat-option [value]="MovementType.ENTRADA">Entradas</mat-option>
-    <mat-option [value]="MovementType.SALIDA">Salidas</mat-option>
-  </mat-select>
-</mat-form-field>
-
-@if (loading()) {
-  <div class="loading">Cargando movimientos...</div>
-} @else {
-  <table mat-table [dataSource]="filteredMovements()" class="mat-elevation-z2">
-    <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef>Tipo</th>
-      <td mat-cell *matCellDef="let m">
-        @if (m.type === MovementType.ENTRADA) {
-          <span class="chip chip-entrada">
-            <mat-icon>arrow_downward</mat-icon>
-            Entrada
-          </span>
-        } @else {
-          <span class="chip chip-salida">
-            <mat-icon>arrow_upward</mat-icon>
-            Salida
-          </span>
-        }
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="productName">
-      <th mat-header-cell *matHeaderCellDef>Producto</th>
-      <td mat-cell *matCellDef="let m">{{ m.productName }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="quantity">
-      <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-      <td mat-cell *matCellDef="let m">
-        <strong
-          [class.text-entrada]="m.type === MovementType.ENTRADA"
-          [class.text-salida]="m.type === MovementType.SALIDA"
-        >
-          {{ m.type === MovementType.ENTRADA ? "+" : "-" }}{{ m.quantity }}
-        </strong>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="notes">
-      <th mat-header-cell *matHeaderCellDef>Notas</th>
-      <td mat-cell *matCellDef="let m">{{ m.notes ?? "—" }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="createdAt">
-      <th mat-header-cell *matHeaderCellDef>Fecha</th>
-      <td mat-cell *matCellDef="let m">
-        {{ m.createdAt | date: "dd/MM/yyyy HH:mm" }}
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns"
-      [class.row-entrada]="row.type === MovementType.ENTRADA"
-      [class.row-salida]="row.type === MovementType.SALIDA"
-    ></tr>
-  </table>
-
-  @if (filteredMovements().length === 0) {
-    <div class="empty-state">
-      <mat-icon>swap_vert</mat-icon>
-      <p>No se encontraron movimientos</p>
-    </div>
+  <!-- Dialog -->
+  @if (showDialog()) {
+    <app-stock-movement-dialog
+      (saved)="onSaved($event)"
+      (closed)="closeDialog()">
+    </app-stock-movement-dialog>
   }
-}
+
+</div>

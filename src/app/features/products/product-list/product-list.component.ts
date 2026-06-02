@@ -1,4 +1,11 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,27 +25,20 @@ import { NotificationService } from '../../../core/services/notification.service
   selector: 'app-product-list',
   standalone: true,
   templateUrl: './product-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   styleUrl: './product-list.component.css',
-  imports: [
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatChipsModule,
-    MatTooltipModule,
-    FormsModule,
-    CurrencyPipe,
-],
+  imports: [FormsModule, CurrencyPipe, ProductDialogComponent],
 })
 export class ProductListComponent implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly notification = inject(NotificationService);
-  private readonly dialog = inject(MatDialog);
 
   readonly products = signal<Product[]>([]);
-  readonly loading = signal<boolean>(false);
-  readonly searchTerm = signal<string>('');
+  readonly loading = signal(false);
+  readonly searchTerm = signal('');
+  readonly showDialog = signal(false);
+  readonly editProduct = signal<Product | null>(null);
 
   readonly filteredProducts = computed(() => {
     const term = this.searchTerm().toLowerCase();
@@ -49,17 +49,6 @@ export class ProductListComponent implements OnInit {
   readonly lowStockCount = computed(
     () => this.products().filter((p) => p.lowStock).length,
   );
-
-  readonly displayedColumns = [
-    'sku',
-    'name',
-    'category',
-    'supplier',
-    'price',
-    'stock',
-    'status',
-    'actions',
-  ];
 
   ngOnInit(): void {
     this.loadProducts();
@@ -72,43 +61,48 @@ export class ProductListComponent implements OnInit {
         this.products.set(data);
         this.loading.set(false);
       },
-      error: (err) => {
-        this.notification.error('Error cargando productos');
-        this.loading.set(false);
-      },
+      error: () => this.loading.set(false),
     });
   }
 
-  onSearch(term: string): void {
-    this.searchTerm.set(term);
+  openCreate(): void {
+    this.editProduct.set(null);
+    this.showDialog.set(true);
   }
 
-  openDialog(product: Product | null = null): void {
-    const dialogRef = this.dialog.open(ProductDialogComponent, {
-      data: product,
-      width: '560px',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-      if (product) {
-        this.products.update((list) =>
-          list.map((p) => (p.id === result.id ? result : p)),
-        );
-      } else {
-        this.products.update((list) => [...list, result]);
-      }
-    });
+  openEdit(product: Product): void {
+    this.editProduct.set(product);
+    this.showDialog.set(true);
   }
 
-  deleteProduct(id: number): void {
+  closeDialog(): void {
+    this.showDialog.set(false);
+    this.editProduct.set(null);
+  }
+
+  onSaved(product: Product): void {
+    if (this.editProduct()) {
+      this.products.update((list) =>
+        list.map((p) => (p.id === product.id ? product : p)),
+      );
+    } else {
+      this.products.update((list) => [...list, product]);
+    }
+    this.closeDialog();
+  }
+
+  delete(id: number): void {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
     this.productService.delete(id).subscribe({
       next: () => {
         this.products.update((list) => list.filter((p) => p.id !== id));
         this.notification.success('Producto eliminado correctamente');
       },
-      error: () => {}
+      error: () => {},
     });
+  }
+
+  onSearch(term: string): void {
+    this.searchTerm.set(term);
   }
 }

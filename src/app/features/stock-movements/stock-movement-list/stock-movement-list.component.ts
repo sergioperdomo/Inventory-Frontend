@@ -1,52 +1,37 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSelectModule } from '@angular/material/select';
-import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import {
-  MOVEMENT_TYPE_LABELS,
   MovementType,
   StockMovement,
 } from '../../../core/models/stock-movement.model';
 import { StockMovementService } from '../../../core/services/stock-movement.service';
-import { MatDialog } from '@angular/material/dialog';
 import { StockMovementDialogComponent } from '../stock-movement-dialog/stock-movement-dialog/stock-movement-dialog.component';
 
 @Component({
   selector: 'app-stock-movement-list',
   standalone: true,
-  imports: [
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatTooltipModule,
-    MatSelectModule,
-    MatChipsModule,
-    FormsModule,
-    DatePipe,
-],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule, DatePipe, StockMovementDialogComponent],
   templateUrl: './stock-movement-list.component.html',
   styleUrl: './stock-movement-list.component.css',
 })
 export class StockMovementListComponent {
   private readonly movementService = inject(StockMovementService);
-  private readonly dialog = inject(MatDialog);
 
   readonly movements = signal<StockMovement[]>([]);
-  readonly loading = signal<boolean>(false);
+  readonly loading = signal(false);
   readonly filterType = signal<MovementType | 'ALL'>('ALL');
+  readonly showDialog = signal(false);
 
   readonly MovementType = MovementType;
-  readonly MOVEMENT_TYPE_LABELS = MOVEMENT_TYPE_LABELS;
 
   readonly filteredMovements = computed(() => {
     const type = this.filterType();
@@ -66,14 +51,6 @@ export class StockMovementListComponent {
       .reduce((acc, m) => acc + m.quantity, 0),
   );
 
-  readonly displayedColumns = [
-    'type',
-    'productName',
-    'quantity',
-    'notes',
-    'createdAt',
-  ];
-
   ngOnInit(): void {
     this.loadMovements();
   }
@@ -85,26 +62,24 @@ export class StockMovementListComponent {
         this.movements.set(data);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error cargando movimientos', err);
-        this.loading.set(false);
-      },
+      error: () => this.loading.set(false),
     });
+  }
+
+  openDialog(): void {
+    this.showDialog.set(true);
+  }
+
+  closeDialog(): void {
+    this.showDialog.set(false);
+  }
+
+  onSaved(movement: StockMovement): void {
+    this.movements.update((list) => [movement, ...list]);
+    this.closeDialog();
   }
 
   onFilterType(type: MovementType | 'ALL'): void {
     this.filterType.set(type);
-  }
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(StockMovementDialogComponent, {
-      data: null,
-      width: '520px',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-      this.movements.update((list) => [result, ...list]);
-    });
   }
 }

@@ -1,14 +1,7 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, input, output } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SupplierService } from '../../../../core/services/supplier.service';
 import { Supplier } from '../../../../core/models/supplier.model';
 import { NotificationService } from '../../../../core/services';
@@ -17,38 +10,43 @@ import { NotificationService } from '../../../../core/services';
   selector: 'app-supplier-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [ReactiveFormsModule],
   templateUrl: './supplier-dialog.component.html',
   styleUrl: './supplier-dialog.component.css',
 })
 export class SupplierDialogComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly dialogRef = inject(MatDialogRef<SupplierDialogComponent>);
   private readonly supplierService = inject(SupplierService);
   private readonly notification = inject(NotificationService);
 
-  readonly data: Supplier | null = inject(MAT_DIALOG_DATA);
-  readonly isEditMode = !!this.data;
+  readonly supplier = input<Supplier | null>(null);
+  readonly saved = output<Supplier>();
+  readonly closed = output<void>();
+
+  get isEditMode(): boolean {
+    return !!this.supplier();
+  }
 
   readonly form = this.fb.group({
-    name: [
-      this.data?.name ?? '',
-      [Validators.required, Validators.maxLength(150)],
-    ],
-    contactName: [this.data?.contactName ?? '', Validators.maxLength(100)],
-    email: [
-      this.data?.email ?? '',
-      [Validators.email, Validators.maxLength(100)],
-    ],
-    phone: [this.data?.phone ?? '', Validators.maxLength(20)],
-    address: [this.data?.address ?? '', Validators.maxLength(255)],
+    name: ['', [Validators.required, Validators.maxLength(150)]],
+    contactName: ['', Validators.maxLength(100)],
+    email: ['', [Validators.email, Validators.maxLength(100)]],
+    phone: ['', Validators.maxLength(20)],
+    address: ['', Validators.maxLength(255)],
   });
+
+  ngOnInit(): void {
+    const s = this.supplier();
+    if (s) {
+      this.form.patchValue({
+        name: s.name,
+        contactName: s.contactName,
+        email: s.email,
+        phone: s.phone,
+        address: s.address,
+      });
+    }
+  }
 
   getError(field: string): string {
     const ctrl = this.form.get(field)!;
@@ -71,7 +69,7 @@ export class SupplierDialogComponent {
     };
 
     const operation$ = this.isEditMode
-      ? this.supplierService.update(this.data!.id, request)
+      ? this.supplierService.update(this.supplier()!.id, request)
       : this.supplierService.create(request);
 
     operation$.subscribe({
@@ -81,13 +79,13 @@ export class SupplierDialogComponent {
             ? 'Proveedor actualizado correctamente'
             : 'Proveedor creado correctamente',
         );
-        this.dialogRef.close(result);
+        this.saved.emit(result);
       },
-      error: () => {}
+      error: () => {},
     });
   }
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.closed.emit();
   }
 }

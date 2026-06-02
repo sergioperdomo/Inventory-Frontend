@@ -2,7 +2,7 @@ export interface Product {
   id: number;
   name: string;
   description: string;
-  sku: string;
+  sku: string | null;
   price: number;
   stockQuantity: number;
   minStockAlert: number;
@@ -16,7 +16,7 @@ export interface Product {
 export interface ProductRequest {
   name: string;
   description: string;
-  sku: string;
+  sku: string | null;
   price: number;
   stockQuantity: number;
   minStockAlert: number;

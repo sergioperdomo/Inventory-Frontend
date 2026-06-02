@@ -1,90 +1,176 @@
-<h2 mat-dialog-title>
-  {{ isEditMode ? 'Editar Producto' : 'Nuevo Producto' }}
-</h2>
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center
+            justify-center p-4" (click)="onCancel()">
 
-<mat-dialog-content>
-  <form [formGroup]="form" class="dialog-form">
+  <!-- Modal -->
+  <div class="bg-slate-800 rounded-2xl border border-slate-700/50 w-full max-w-lg
+              shadow-2xl" (click)="$event.stopPropagation()">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" placeholder="Ej: Laptop Dell Inspiron">
-      @if (form.get('name')?.invalid && form.get('name')?.touched) {
-        <mat-error>{{ getError('name') }}</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="description" rows="2"
-                placeholder="Descripción opcional...">
-      </textarea>
-    </mat-form-field>
-
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>SKU</mat-label>
-        <input matInput formControlName="sku" placeholder="Ej: PROD-001">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Precio</mat-label>
-        <span matPrefix>$&nbsp;</span>
-        <input matInput type="number" formControlName="price" placeholder="0">
-        @if (form.get('price')?.invalid && form.get('price')?.touched) {
-          <mat-error>{{ getError('price') }}</mat-error>
-        }
-      </mat-form-field>
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700/50">
+      <h2 class="text-lg font-semibold text-white">
+        {{ isEditMode ? 'Editar Producto' : 'Nuevo Producto' }}
+      </h2>
+      <button (click)="onCancel()"
+              class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg
+                     hover:bg-slate-700">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
 
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Stock actual</mat-label>
-        <input matInput type="number" formControlName="stockQuantity">
-        @if (form.get('stockQuantity')?.invalid && form.get('stockQuantity')?.touched) {
-          <mat-error>{{ getError('stockQuantity') }}</mat-error>
-        }
-      </mat-form-field>
+    <!-- Body -->
+    <div class="px-6 py-5 max-h-[70vh] overflow-y-auto">
+      <form [formGroup]="form" class="space-y-4">
 
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Stock mínimo (alerta)</mat-label>
-        <input matInput type="number" formControlName="minStockAlert">
-        @if (form.get('minStockAlert')?.invalid && form.get('minStockAlert')?.touched) {
-          <mat-error>{{ getError('minStockAlert') }}</mat-error>
-        }
-      </mat-form-field>
-    </div>
-
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Categoría</mat-label>
-        <mat-select formControlName="categoryId">
-          <mat-option [value]="null">Sin categoría</mat-option>
-          @for (cat of categories(); track cat.id) {
-            <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+        <!-- Nombre -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Nombre <span class="text-red-400">*</span>
+          </label>
+          <input formControlName="name"
+                 type="text"
+                 placeholder="Ej: Laptop Dell Inspiron"
+                 class="w-full bg-slate-900 border border-slate-700 text-white
+                        placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                        focus:outline-none focus:ring-2 focus:ring-indigo-500
+                        focus:border-transparent transition-all">
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <p class="text-red-400 text-xs mt-1">{{ getError('name') }}</p>
           }
-        </mat-select>
-      </mat-form-field>
+        </div>
 
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Proveedor</mat-label>
-        <mat-select formControlName="supplierId">
-          <mat-option [value]="null">Sin proveedor</mat-option>
-          @for (sup of suppliers(); track sup.id) {
-            <mat-option [value]="sup.id">{{ sup.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+        <!-- Descripción -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Descripción
+          </label>
+          <textarea formControlName="description"
+                    rows="2"
+                    placeholder="Descripción opcional..."
+                    class="w-full bg-slate-900 border border-slate-700 text-white
+                           placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                           focus:outline-none focus:ring-2 focus:ring-indigo-500
+                           focus:border-transparent transition-all resize-none">
+          </textarea>
+        </div>
+
+        <!-- SKU y Precio -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">SKU</label>
+            <input formControlName="sku"
+                   type="text"
+                   placeholder="Ej: PROD-001"
+                   class="w-full bg-slate-900 border border-slate-700 text-white
+                          placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                          focus:outline-none focus:ring-2 focus:ring-indigo-500
+                          focus:border-transparent transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">
+              Precio <span class="text-red-400">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center
+                           text-slate-500 text-sm">$</span>
+              <input formControlName="price"
+                     type="number"
+                     placeholder="0"
+                     class="w-full bg-slate-900 border border-slate-700 text-white
+                            placeholder-slate-500 rounded-xl pl-7 pr-4 py-2.5 text-sm
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500
+                            focus:border-transparent transition-all">
+            </div>
+            @if (form.get('price')?.invalid && form.get('price')?.touched) {
+              <p class="text-red-400 text-xs mt-1">{{ getError('price') }}</p>
+            }
+          </div>
+        </div>
+
+        <!-- Stock actual y mínimo -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">
+              Stock actual <span class="text-red-400">*</span>
+            </label>
+            <input formControlName="stockQuantity"
+                   type="number"
+                   class="w-full bg-slate-900 border border-slate-700 text-white
+                          placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                          focus:outline-none focus:ring-2 focus:ring-indigo-500
+                          focus:border-transparent transition-all">
+            @if (form.get('stockQuantity')?.invalid && form.get('stockQuantity')?.touched) {
+              <p class="text-red-400 text-xs mt-1">{{ getError('stockQuantity') }}</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">
+              Stock mínimo <span class="text-red-400">*</span>
+            </label>
+            <input formControlName="minStockAlert"
+                   type="number"
+                   class="w-full bg-slate-900 border border-slate-700 text-white
+                          placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                          focus:outline-none focus:ring-2 focus:ring-indigo-500
+                          focus:border-transparent transition-all">
+            @if (form.get('minStockAlert')?.invalid && form.get('minStockAlert')?.touched) {
+              <p class="text-red-400 text-xs mt-1">{{ getError('minStockAlert') }}</p>
+            }
+          </div>
+        </div>
+
+        <!-- Categoría y Proveedor -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">Categoría</label>
+            <select formControlName="categoryId"
+                    class="w-full bg-slate-900 border border-slate-700 text-white
+                           rounded-xl px-4 py-2.5 text-sm focus:outline-none
+                           focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                           transition-all">
+              <option [ngValue]="null">Sin categoría</option>
+              @for (cat of categories(); track cat.id) {
+                <option [ngValue]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">Proveedor</label>
+            <select formControlName="supplierId"
+                    class="w-full bg-slate-900 border border-slate-700 text-white
+                           rounded-xl px-4 py-2.5 text-sm focus:outline-none
+                           focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                           transition-all">
+              <option [ngValue]="null">Sin proveedor</option>
+              @for (sup of suppliers(); track sup.id) {
+                <option [ngValue]="sup.id">{{ sup.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+      </form>
     </div>
 
-  </form>
-</mat-dialog-content>
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4
+                border-t border-slate-700/50">
+      <button (click)="onCancel()"
+              class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white
+                     hover:bg-slate-700 rounded-xl transition-all duration-200">
+        Cancelar
+      </button>
+      <button (click)="onSubmit()"
+              [disabled]="form.invalid"
+              class="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500
+                     disabled:bg-indigo-800 disabled:cursor-not-allowed text-white
+                     rounded-xl transition-all duration-200">
+        {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+      </button>
+    </div>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button
-          color="primary"
-          [disabled]="form.invalid"
-          (click)="onSubmit()">
-    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
-  </button>
-</mat-dialog-actions>
+  </div>
+</div>
