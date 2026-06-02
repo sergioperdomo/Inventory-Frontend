@@ -6,12 +6,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatTooltipModule } from '@angular/material/tooltip';
+
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { Supplier } from '../../../core/models';
@@ -23,26 +18,19 @@ import { NotificationService } from '../../../core/services/notification.service
   selector: 'app-supplier-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatTooltipModule,
-    FormsModule,
-],
+  imports: [FormsModule, SupplierDialogComponent],
   templateUrl: './supplier-list.component.html',
   styleUrl: './supplier-list.component.css',
 })
 export class SupplierListComponent implements OnInit {
   private readonly supplierService = inject(SupplierService);
-  private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
 
   readonly suppliers = signal<Supplier[]>([]);
-  readonly loading = signal<boolean>(false);
-  readonly searchTerm = signal<string>('');
+  readonly loading = signal(false);
+  readonly searchTerm = signal('');
+  readonly showDialog = signal(false);
+  readonly editSupplier = signal<Supplier | null>(null);
 
   readonly filteredSuppliers = computed(() => {
     const term = this.searchTerm().toLowerCase();
@@ -53,15 +41,6 @@ export class SupplierListComponent implements OnInit {
         s.contactName?.toLowerCase().includes(term),
     );
   });
-
-  readonly displayedColumns = [
-    'name',
-    'contactName',
-    'email',
-    'phone',
-    'productCount',
-    'actions',
-  ];
 
   ngOnInit(): void {
     this.loadSuppliers();
@@ -74,33 +53,38 @@ export class SupplierListComponent implements OnInit {
         this.suppliers.set(data);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error cargando proveedores', err);
-        this.loading.set(false);
-      },
+      error: () => this.loading.set(false),
     });
+  }
+
+  openCreate(): void {
+    this.editSupplier.set(null);
+    this.showDialog.set(true);
+  }
+
+  openEdit(supplier: Supplier): void {
+    this.editSupplier.set(supplier);
+    this.showDialog.set(true);
+  }
+
+  closeDialog(): void {
+    this.showDialog.set(false);
+    this.editSupplier.set(null);
+  }
+
+  onSaved(supplier: Supplier): void {
+    if (this.editSupplier()) {
+      this.suppliers.update((list) =>
+        list.map((s) => (s.id === supplier.id ? supplier : s)),
+      );
+    } else {
+      this.suppliers.update((list) => [...list, supplier]);
+    }
+    this.closeDialog();
   }
 
   onSearch(term: string): void {
     this.searchTerm.set(term);
-  }
-
-  openDialog(supplier: Supplier | null = null): void {
-    const dialogRef = this.dialog.open(SupplierDialogComponent, {
-      data: supplier,
-      width: '520px',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-      if (supplier) {
-        this.suppliers.update((list) =>
-          list.map((s) => (s.id === result.id ? result : s)),
-        );
-      } else {
-        this.suppliers.update((list) => [...list, result]);
-      }
-    });
   }
 
   delete(id: number): void {
@@ -110,7 +94,7 @@ export class SupplierListComponent implements OnInit {
         this.suppliers.update((list) => list.filter((s) => s.id !== id));
         this.notification.success('Proveedor eliminado correctamente');
       },
-      error: (err) => {},
+      error: () => {},
     });
   }
 }

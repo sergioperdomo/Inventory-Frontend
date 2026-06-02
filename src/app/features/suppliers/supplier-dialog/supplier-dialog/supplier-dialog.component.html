@@ -1,52 +1,131 @@
-<h2 mat-dialog-title>
-  {{ isEditMode ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
-</h2>
-
-<mat-dialog-content>
-  <form [formGroup]="form" class="dialog-form">
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre de la empresa</mat-label>
-      <input matInput formControlName="name" placeholder="Ej: TechCorp S.A.">
-      @if (form.get('name')?.invalid && form.get('name')?.touched) {
-        <mat-error>{{ getError('name') }}</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre del contacto</mat-label>
-      <input matInput formControlName="contactName" placeholder="Ej: Juan Pérez">
-    </mat-form-field>
-
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" placeholder="contacto@empresa.com">
-        @if (form.get('email')?.invalid && form.get('email')?.touched) {
-          <mat-error>{{ getError('email') }}</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="phone" placeholder="Ej: 555-0100">
-      </mat-form-field>
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  (click)="onCancel()"
+>
+  <div
+    class="bg-slate-800 rounded-2xl border border-slate-700/50 w-full max-w-lg shadow-2xl"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between px-6 py-4 border-b border-slate-700/50"
+    >
+      <h2 class="text-lg font-semibold text-white">
+        {{ isEditMode ? "Editar Proveedor" : "Nuevo Proveedor" }}
+      </h2>
+      <button
+        (click)="onCancel()"
+        class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-700"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
     </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Dirección</mat-label>
-      <input matInput formControlName="address" placeholder="Dirección opcional...">
-    </mat-form-field>
+    <!-- Body -->
+    <div class="px-6 py-5 space-y-4">
+      <form [formGroup]="form" class="space-y-4">
+        <!-- Nombre empresa -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Nombre de la empresa <span class="text-red-400">*</span>
+          </label>
+          <input
+            formControlName="name"
+            type="text"
+            placeholder="Ej: TechCorp S.A."
+            class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          />
+          @if (form.get("name")?.invalid && form.get("name")?.touched) {
+            <p class="text-red-400 text-xs mt-1">{{ getError("name") }}</p>
+          }
+        </div>
 
-  </form>
-</mat-dialog-content>
+        <!-- Contacto -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Nombre del contacto
+          </label>
+          <input
+            formControlName="contactName"
+            type="text"
+            placeholder="Ej: Juan Pérez"
+            class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          />
+        </div>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button
-          color="primary"
-          [disabled]="form.invalid"
-          (click)="onSubmit()">
-    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
-  </button>
-</mat-dialog-actions>
+        <!-- Email y Teléfono -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5"
+              >Email</label
+            >
+            <input
+              formControlName="email"
+              type="email"
+              placeholder="contacto@empresa.com"
+              class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            />
+            @if (form.get("email")?.invalid && form.get("email")?.touched) {
+              <p class="text-red-400 text-xs mt-1">{{ getError("email") }}</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1.5"
+              >Teléfono</label
+            >
+            <input
+              formControlName="phone"
+              type="text"
+              placeholder="Ej: 555-0100"
+              class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            />
+          </div>
+        </div>
+
+        <!-- Dirección -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"
+            >Dirección</label
+          >
+          <input
+            formControlName="address"
+            type="text"
+            placeholder="Dirección opcional..."
+            class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          />
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div
+      class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-700/50"
+    >
+      <button
+        (click)="onCancel()"
+        class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-700 rounded-xl transition-all duration-200"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="onSubmit()"
+        [disabled]="form.invalid"
+        class="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed text-white rounded-xl transition-all duration-200"
+      >
+        {{ isEditMode ? "Guardar cambios" : "Crear" }}
+      </button>
+    </div>
+  </div>
+</div>

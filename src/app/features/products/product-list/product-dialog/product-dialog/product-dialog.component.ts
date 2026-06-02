@@ -1,4 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import {
@@ -20,53 +28,40 @@ import { NotificationService } from '../../../../../core/services';
 
 @Component({
   selector: 'app-product-dialog',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-  ],
+  imports: [ReactiveFormsModule],
   templateUrl: './product-dialog.component.html',
   styleUrl: './product-dialog.component.css',
 })
 export class ProductDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly dialogRef = inject(MatDialogRef<ProductDialogComponent>);
   private readonly productService = inject(ProductService);
   private readonly categoryService = inject(CategoryService);
   private readonly supplierService = inject(SupplierService);
   private readonly notification = inject(NotificationService);
 
-  readonly data: Product | null = inject(MAT_DIALOG_DATA);
-  readonly isEditMode = !!this.data;
+  // Signals API — reemplazan @Input y @Output
+  readonly product = input<Product | null>(null);
+  readonly saved = output<Product>();
+  readonly closed = output<void>();
 
   readonly categories = signal<Category[]>([]);
   readonly suppliers = signal<Supplier[]>([]);
 
+  get isEditMode(): boolean {
+    return !!this.product();
+  }
+
   readonly form = this.fb.group({
-    name: [
-      this.data?.name ?? '',
-      [Validators.required, Validators.maxLength(150)],
-    ],
-    description: [this.data?.description ?? '', Validators.maxLength(500)],
-    sku: [this.data?.sku ?? '', Validators.maxLength(50)],
-    price: [
-      this.data?.price ?? null,
-      [Validators.required, Validators.min(0.01)],
-    ],
-    stockQuantity: [
-      this.data?.stockQuantity ?? 0,
-      [Validators.required, Validators.min(0)],
-    ],
-    minStockAlert: [
-      this.data?.minStockAlert ?? 5,
-      [Validators.required, Validators.min(0)],
-    ],
-    categoryId: [this.data?.categoryId ?? null], // ← ahora usa el ID real
-    supplierId: [this.data?.supplierId ?? null], // ← ahora usa el ID real
+    name: ['', [Validators.required, Validators.maxLength(150)]],
+    description: ['', Validators.maxLength(500)],
+    sku: ['', Validators.maxLength(50)],
+    price: [null as number | null, [Validators.required, Validators.min(0.01)]],
+    stockQuantity: [0, [Validators.required, Validators.min(0)]],
+    minStockAlert: [5, [Validators.required, Validators.min(0)]],
+    categoryId: [null as number | null],
+    supplierId: [null as number | null],
   });
 
   ngOnInit(): void {
@@ -74,6 +69,21 @@ export class ProductDialogComponent implements OnInit {
       .getAll()
       .subscribe((data) => this.categories.set(data));
     this.supplierService.getAll().subscribe((data) => this.suppliers.set(data));
+
+    // Si es edición carga los datos en el formulario
+    const p = this.product();
+    if (p) {
+      this.form.patchValue({
+        name: p.name,
+        description: p.description,
+        sku: p.sku,
+        price: p.price,
+        stockQuantity: p.stockQuantity,
+        minStockAlert: p.minStockAlert,
+        categoryId: p.categoryId,
+        supplierId: p.supplierId,
+      });
+    }
   }
 
   getError(field: string): string {
@@ -101,7 +111,7 @@ export class ProductDialogComponent implements OnInit {
     };
 
     const operation$ = this.isEditMode
-      ? this.productService.update(this.data!.id, request)
+      ? this.productService.update(this.product()!.id, request)
       : this.productService.create(request);
 
     operation$.subscribe({
@@ -111,13 +121,13 @@ export class ProductDialogComponent implements OnInit {
             ? 'Producto actualizado correctamente'
             : 'Producto creado correctamente',
         );
-        this.dialogRef.close(result);
+        this.saved.emit(result);
       },
       error: () => {},
     });
   }
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.closed.emit();
   }
 }

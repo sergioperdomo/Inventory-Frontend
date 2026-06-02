@@ -1,167 +1,433 @@
-<div class="dashboard-title">
-  <h1>Dashboard</h1>
-  <span class="subtitle">Resumen general del inventario</span>
+<div class="space-y-6">
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+    <p class="text-slate-400 text-sm mt-1">Resumen general del inventario</p>
+  </div>
+
+  <!-- Métricas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <!-- Total productos -->
+    <div
+      class="bg-slate-800 rounded-xl p-5 border border-slate-700/50 hover:border-indigo-500/30 transition-all duration-200"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-slate-400 text-sm">Total Productos</span>
+        <div
+          class="w-9 h-9 rounded-lg bg-indigo-500/20 flex items-center justify-center"
+        >
+          <svg
+            class="w-5 h-5 text-indigo-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+            />
+          </svg>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-white">{{ totalProducts() }}</p>
+      <p class="text-slate-500 text-xs mt-1">productos registrados</p>
+    </div>
+
+    <!-- Categorías -->
+    <div
+      class="bg-slate-800 rounded-xl p-5 border border-slate-700/50 hover:border-emerald-500/30 transition-all duration-200"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-slate-400 text-sm">Categorías</span>
+        <div
+          class="w-9 h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center"
+        >
+          <svg
+            class="w-5 h-5 text-emerald-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0
+                     01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+            />
+          </svg>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-white">{{ totalCategories() }}</p>
+      <p class="text-slate-500 text-xs mt-1">categorías activas</p>
+    </div>
+
+    <!-- Proveedores -->
+    <div
+      class="bg-slate-800 rounded-xl p-5 border border-slate-700/50 hover:border-violet-500/30 transition-all duration-200"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-slate-400 text-sm">Proveedores</span>
+        <div
+          class="w-9 h-9 rounded-lg bg-violet-500/20 flex items-center justify-center"
+        >
+          <svg
+            class="w-5 h-5 text-violet-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+            />
+          </svg>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-white">{{ totalSuppliers() }}</p>
+      <p class="text-slate-500 text-xs mt-1">proveedores registrados</p>
+    </div>
+
+    <!-- Stock bajo -->
+    <div
+      class="bg-slate-800 rounded-xl p-5 border transition-all duration-200"
+      [class]="
+        lowStockProducts().length > 0
+          ? 'border-red-500/50 hover:border-red-500/70'
+          : 'border-slate-700/50 hover:border-slate-600'
+      "
+    >
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-slate-400 text-sm">Stock Bajo</span>
+        <div
+          class="w-9 h-9 rounded-lg flex items-center justify-center"
+          [class]="
+            lowStockProducts().length > 0 ? 'bg-red-500/20' : 'bg-slate-700'
+          "
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            [class]="
+              lowStockProducts().length > 0 ? 'text-red-400' : 'text-slate-400'
+            "
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77
+                     -1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+      </div>
+      <p
+        class="text-3xl font-bold"
+        [class]="lowStockProducts().length > 0 ? 'text-red-400' : 'text-white'"
+      >
+        {{ lowStockProducts().length }}
+      </p>
+      <p class="text-slate-500 text-xs mt-1">requieren atención</p>
+    </div>
+  </div>
+
+  <!-- Valor del inventario -->
+  <div class="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 rounded-xl p-5
+            border border-indigo-500/30">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="text-slate-400 text-sm mb-1">Valor total del inventario</p>
+      @if (showValue()) {
+        <p class="text-3xl font-bold text-white">
+          {{ totalStockValue() | currency:'COP ':'symbol':'1.0-0' }}
+        </p>
+      } @else {
+        <p class="text-3xl font-bold text-white tracking-widest">
+          ••••••••
+        </p>
+      }
+    </div>
+    <button (click)="toggleValue()"
+            class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center
+                   justify-center hover:bg-indigo-500/30 transition-colors">
+      @if (showValue()) {
+        <svg class="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                   -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+      } @else {
+        <svg class="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7
+                   a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878
+                   l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59
+                   m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025
+                   0 01-4.132 4.411m0 0L21 21"/>
+        </svg>
+      }
+    </button>
+  </div>
 </div>
 
-<!-- Tarjetas de métricas -->
-<div class="metrics-grid">
+  <!-- Sección inferior -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <!-- Alertas de stock bajo -->
+    <div
+      class="bg-slate-800 rounded-xl border border-slate-700/50 overflow-hidden"
+    >
+      <div
+        class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-red-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732
+                       4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-white font-medium text-sm">
+              Alertas de Stock Bajo
+            </h2>
+            <p class="text-slate-500 text-xs">
+              {{ lowStockProducts().length }} producto(s)
+            </p>
+          </div>
+        </div>
+        <a
+          routerLink="/products"
+          class="text-indigo-400 hover:text-indigo-300 text-xs transition-colors"
+        >
+          Ver todos →
+        </a>
+      </div>
 
-  <div class="metric-card">
-    <div class="metric-icon blue">
-      <mat-icon>inventory_2</mat-icon>
-    </div>
-    <div class="metric-info">
-      <span class="metric-label">Total Productos</span>
-      <span class="metric-value">{{ totalProducts() }}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-icon green">
-      <mat-icon>category</mat-icon>
-    </div>
-    <div class="metric-info">
-      <span class="metric-label">Categorías</span>
-      <span class="metric-value">{{ totalCategories() }}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-icon purple">
-      <mat-icon>local_shipping</mat-icon>
-    </div>
-    <div class="metric-info">
-      <span class="metric-label">Proveedores</span>
-      <span class="metric-value">{{ totalSuppliers() }}</span>
-    </div>
-  </div>
-
-  <div class="metric-card" [class.alert]="lowStockProducts().length > 0">
-    <div class="metric-icon orange">
-      <mat-icon>warning</mat-icon>
-    </div>
-    <div class="metric-info">
-      <span class="metric-label">Stock Bajo</span>
-      <span class="metric-value">{{ lowStockProducts().length }}</span>
-    </div>
-  </div>
-
-  <div class="metric-card full-width">
-    <div class="metric-icon teal">
-      <mat-icon>attach_money</mat-icon>
-    </div>
-    <div class="metric-info">
-      <span class="metric-label">Valor total del inventario</span>
-      <span class="metric-value">
-        {{ totalStockValue() | currency:'COP ':'symbol':'1.0-0' }}
-      </span>
-    </div>
-  </div>
-
-</div>
-
-<!-- Sección inferior: alertas + movimientos recientes -->
-<div class="bottom-grid">
-
-  <!-- Productos con stock bajo -->
-  <mat-card class="section-card">
-    <mat-card-header>
-      <mat-icon mat-card-avatar class="icon-warn">warning</mat-icon>
-      <mat-card-title>Alertas de Stock Bajo</mat-card-title>
-      <mat-card-subtitle>{{ lowStockProducts().length }} producto(s) requieren atención</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
       @if (lowStockProducts().length === 0) {
-        <div class="empty-section">
-          <mat-icon>check_circle</mat-icon>
-          <p>Todo el stock está en niveles normales</p>
+        <div
+          class="flex flex-col items-center justify-center py-10 text-slate-500"
+        >
+          <svg
+            class="w-10 h-10 mb-3 text-slate-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-sm">Todo el stock está en niveles normales</p>
         </div>
       } @else {
-        <table mat-table [dataSource]="lowStockProducts()" class="inner-table">
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Producto</th>
-            <td mat-cell *matCellDef="let p">{{ p.name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="sku">
-            <th mat-header-cell *matHeaderCellDef>SKU</th>
-            <td mat-cell *matCellDef="let p">{{ p.sku ?? '—' }}</td>
-          </ng-container>
-          <ng-container matColumnDef="stockQuantity">
-            <th mat-header-cell *matHeaderCellDef>Stock actual</th>
-            <td mat-cell *matCellDef="let p">
-              <span class="text-danger">{{ p.stockQuantity }}</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="minStockAlert">
-            <th mat-header-cell *matHeaderCellDef>Mínimo</th>
-            <td mat-cell *matCellDef="let p">{{ p.minStockAlert }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="lowStockColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: lowStockColumns;"></tr>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-slate-700/50">
+                <th
+                  class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Producto
+                </th>
+                <th
+                  class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  SKU
+                </th>
+                <th
+                  class="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Stock
+                </th>
+                <th
+                  class="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Mínimo
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of lowStockProducts(); track product.id) {
+                <tr
+                  class="border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors"
+                >
+                  <td class="px-5 py-3 text-sm text-white">
+                    {{ product.name }}
+                  </td>
+                  <td class="px-5 py-3 text-sm text-slate-400">
+                    {{ product.sku || '-' }}
+                  </td>
+                  <td class="px-5 py-3 text-sm text-right">
+                    <span class="text-red-400 font-semibold">{{
+                      product.stockQuantity
+                    }}</span>
+                  </td>
+                  <td class="px-5 py-3 text-sm text-slate-400 text-right">
+                    {{ product.minStockAlert }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button color="primary" routerLink="/products">
-        Ver todos los productos
-      </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
 
-  <!-- Movimientos recientes -->
-  <mat-card class="section-card">
-    <mat-card-header>
-      <mat-icon mat-card-avatar class="icon-info">swap_vert</mat-icon>
-      <mat-card-title>Movimientos Recientes</mat-card-title>
-      <mat-card-subtitle>Últimos 5 movimientos registrados</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
+    <!-- Movimientos recientes -->
+    <div
+      class="bg-slate-800 rounded-xl border border-slate-700/50 overflow-hidden"
+    >
+      <div
+        class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-indigo-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-white font-medium text-sm">
+              Movimientos Recientes
+            </h2>
+            <p class="text-slate-500 text-xs">Últimos 5 movimientos</p>
+          </div>
+        </div>
+        <a
+          routerLink="/stock-movements"
+          class="text-indigo-400 hover:text-indigo-300 text-xs transition-colors"
+        >
+          Ver todos →
+        </a>
+      </div>
+
       @if (recentMovements().length === 0) {
-        <div class="empty-section">
-          <mat-icon>inbox</mat-icon>
-          <p>No hay movimientos registrados</p>
+        <div
+          class="flex flex-col items-center justify-center py-10 text-slate-500"
+        >
+          <svg
+            class="w-10 h-10 mb-3 text-slate-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0
+                     01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293
+                     h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
+          </svg>
+          <p class="text-sm">No hay movimientos registrados</p>
         </div>
       } @else {
-        <table mat-table [dataSource]="recentMovements()" class="inner-table">
-          <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef>Tipo</th>
-            <td mat-cell *matCellDef="let m">
-              <span [class.chip-entrada]="m.type === MovementType.ENTRADA"
-                    [class.chip-salida]="m.type === MovementType.SALIDA"
-                    class="chip">
-                {{ m.type === MovementType.ENTRADA ? 'Entrada' : 'Salida' }}
-              </span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="productName">
-            <th mat-header-cell *matHeaderCellDef>Producto</th>
-            <td mat-cell *matCellDef="let m">{{ m.productName }}</td>
-          </ng-container>
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-            <td mat-cell *matCellDef="let m">
-              <strong [class.text-entrada]="m.type === MovementType.ENTRADA"
-                      [class.text-salida]="m.type === MovementType.SALIDA">
-                {{ m.type === MovementType.ENTRADA ? '+' : '-' }}{{ m.quantity }}
-              </strong>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef>Fecha</th>
-            <td mat-cell *matCellDef="let m">
-              {{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="movementColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: movementColumns;"></tr>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-slate-700/50">
+                <th
+                  class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Tipo
+                </th>
+                <th
+                  class="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Producto
+                </th>
+                <th
+                  class="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Cantidad
+                </th>
+                <th
+                  class="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3"
+                >
+                  Fecha
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (movement of recentMovements(); track movement.id) {
+                <tr
+                  class="border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors"
+                >
+                  <td class="px-5 py-3">
+                    @if (movement.type === MovementType.ENTRADA) {
+                      <span
+                        class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400"
+                      >
+                        ↓ Entrada
+                      </span>
+                    } @else {
+                      <span
+                        class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400"
+                      >
+                        ↑ Salida
+                      </span>
+                    }
+                  </td>
+                  <td class="px-5 py-3 text-sm text-white">
+                    {{ movement.productName }}
+                  </td>
+                  <td
+                    class="px-5 py-3 text-sm text-right font-semibold"
+                    [class]="
+                      movement.type === MovementType.ENTRADA
+                        ? 'text-emerald-400'
+                        : 'text-red-400'
+                    "
+                  >
+                    {{ movement.type === MovementType.ENTRADA ? "+" : "-"
+                    }}{{ movement.quantity }}
+                  </td>
+                  <td class="px-5 py-3 text-xs text-slate-400 text-right">
+                    {{ movement.createdAt | date: "dd/MM/yy HH:mm" }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button color="primary" routerLink="/stock-movements">
-        Ver todos los movimientos
-      </button>
-    </mat-card-actions>
-  </mat-card>
-
+    </div>
+  </div>
 </div>

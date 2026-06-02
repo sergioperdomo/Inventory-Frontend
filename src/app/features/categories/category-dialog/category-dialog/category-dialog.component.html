@@ -1,36 +1,76 @@
-<h2 mat-dialog-title>
-  {{ isEditMode ? 'Editar Categoría' : 'Nueva Categoría' }}
-</h2>
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center
+            justify-center p-4" (click)="onCancel()">
 
-<mat-dialog-content>
-  <form [formGroup]="form" class="dialog-form">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700/50 w-full max-w-md
+              shadow-2xl" (click)="$event.stopPropagation()">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" placeholder="Ej: Electrónica">
-      @if (form.get('name')?.invalid && form.get('name')?.touched) {
-        <mat-error>{{ nameError }}</mat-error>
-      }
-    </mat-form-field>
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700/50">
+      <h2 class="text-lg font-semibold text-white">
+        {{ isEditMode ? 'Editar Categoría' : 'Nueva Categoría' }}
+      </h2>
+      <button (click)="onCancel()"
+              class="text-slate-400 hover:text-white transition-colors p-1
+                     rounded-lg hover:bg-slate-700">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput
-                formControlName="description"
-                rows="3"
-                placeholder="Descripción opcional...">
-      </textarea>
-    </mat-form-field>
+    <!-- Body -->
+    <div class="px-6 py-5">
+      <form [formGroup]="form" class="space-y-4">
 
-  </form>
-</mat-dialog-content>
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Nombre <span class="text-red-400">*</span>
+          </label>
+          <input formControlName="name"
+                 type="text"
+                 placeholder="Ej: Electrónica"
+                 class="w-full bg-slate-900 border border-slate-700 text-white
+                        placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                        focus:outline-none focus:ring-2 focus:ring-indigo-500
+                        focus:border-transparent transition-all">
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <p class="text-red-400 text-xs mt-1">{{ getError('name') }}</p>
+          }
+        </div>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button
-          color="primary"
-          [disabled]="form.invalid"
-          (click)="onSubmit()">
-    {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
-  </button>
-</mat-dialog-actions>
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Descripción
+          </label>
+          <textarea formControlName="description"
+                    rows="3"
+                    placeholder="Descripción opcional..."
+                    class="w-full bg-slate-900 border border-slate-700 text-white
+                           placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm
+                           focus:outline-none focus:ring-2 focus:ring-indigo-500
+                           focus:border-transparent transition-all resize-none">
+          </textarea>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-700/50">
+      <button (click)="onCancel()"
+              class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white
+                     hover:bg-slate-700 rounded-xl transition-all duration-200">
+        Cancelar
+      </button>
+      <button (click)="onSubmit()"
+              [disabled]="form.invalid"
+              class="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500
+                     disabled:bg-indigo-800 disabled:cursor-not-allowed text-white
+                     rounded-xl transition-all duration-200">
+        {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+      </button>
+    </div>
+
+  </div>
+</div>
