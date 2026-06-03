@@ -1,12 +1,8 @@
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { ToastComponent } from '../../shared/components/toast/toast.component';
 
 interface NavItem {
   label: string;
@@ -24,7 +20,8 @@ interface NavItem {
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    ToastComponent
 ],
 })
 export class LayoutComponent {

@@ -1,7 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy, input, output } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SupplierService } from '../../../../core/services/supplier.service';
 import { Supplier } from '../../../../core/models/supplier.model';
 import { NotificationService } from '../../../../core/services';

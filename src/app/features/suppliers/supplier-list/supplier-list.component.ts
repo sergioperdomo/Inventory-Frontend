@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../../../core/services/supplier.service';
 import { Supplier } from '../../../core/models';
 import { SupplierDialogComponent } from '../supplier-dialog/supplier-dialog/supplier-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
