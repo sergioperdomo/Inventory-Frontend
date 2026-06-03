@@ -6,18 +6,10 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ProductDialogComponent } from './product-dialog/product-dialog/product-dialog.component';
 import { NotificationService } from '../../../core/services/notification.service';
 

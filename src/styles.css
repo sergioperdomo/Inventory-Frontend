@@ -2,58 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Estilos globales ──────────────────────────────────────────────────── */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Roboto', sans-serif;
-  background: #f1f5f9;
-  color: #1e293b;
-}
-
-/* ─── Snackbar notifications ────────────────────────────────────────────── */
-.snack-success {
-  --mdc-snackbar-container-color: #2563eb !important;
-  --mdc-snackbar-supporting-text-color: white !important;
-  --mat-snack-bar-button-color: white !important;
-}
-
-.snack-error {
-  --mdc-snackbar-container-color: #dc2626 !important;
-  --mdc-snackbar-supporting-text-color: white !important;
-  --mat-snack-bar-button-color: white !important;
-}
-
-.snack-warning {
-  --mdc-snackbar-container-color: #d97706 !important;
-  --mdc-snackbar-supporting-text-color: white !important;
-  --mat-snack-bar-button-color: white !important;
-}
-
-.snack-info {
-  --mdc-snackbar-container-color: #2563eb !important;
-  --mdc-snackbar-supporting-text-color: white !important;
-  --mat-snack-bar-button-color: white !important;
-}
-
 /* ─── Scrollbar personalizado ───────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0f172a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #334155;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #475569;
 }
