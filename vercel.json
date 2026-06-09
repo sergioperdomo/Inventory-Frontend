@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx ng build --configuration production",
+  "buildCommand": "npm install --include=dev && npm run build",
   "outputDirectory": "dist/inventory-frontend/browser",
   "framework": null,
   "rewrites": [
