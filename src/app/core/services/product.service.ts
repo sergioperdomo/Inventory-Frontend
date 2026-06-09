@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Product, ProductRequest } from '../models';
 import { Observable } from 'rxjs';
+import { environment } from '../../../enviroments/enviroment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 export class ProductService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/products';
+  private readonly apiUrl = `${environment.apiUrl}/api/products`;
 
   getAll(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);

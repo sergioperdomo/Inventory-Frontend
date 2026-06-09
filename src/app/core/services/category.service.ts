@@ -2,14 +2,17 @@ import { inject, Injectable } from '@angular/core';
 import { Category, CategoryRequest } from '../models';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../enviroments/enviroment';
+
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CategoryService {
+  private readonly apiUrl = `${environment.apiUrl}/api/categories`;
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/categories';
+  // private readonly apiUrl = '/api/categories';
 
   getAll(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrl);
