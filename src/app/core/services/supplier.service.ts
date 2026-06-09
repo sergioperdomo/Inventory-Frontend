@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Supplier, SupplierRequest } from '../models';
+import { environment } from '../../../enviroments/enviroment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { Supplier, SupplierRequest } from '../models';
 export class SupplierService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/suppliers';
+  private readonly apiUrl = `${environment.apiUrl}/api/suppliers`;
 
   getAll(): Observable<Supplier[]> {
     return this.http.get<Supplier[]>(this.apiUrl);

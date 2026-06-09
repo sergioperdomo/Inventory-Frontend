@@ -8,6 +8,7 @@ import {
   UserRole,
 } from '../models/auth.model';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../../enviroments/enviroment.prod';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,7 @@ export class AuthService {
   );
 
   login(request: LoginRequest) {
-    return this.http.post<LoginResponse>('/api/auth/login', request).pipe(
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/api/auth/login`, request).pipe(
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
         const user: AuthUser = {

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { StockMovement, StockMovementRequest } from '../models';
 import { Observable } from 'rxjs';
+import { environment } from '../../../enviroments/enviroment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,8 @@ import { Observable } from 'rxjs';
 export class StockMovementService {
 
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/stock-movements';
+  private readonly apiUrl = `${environment.apiUrl}/api/stock-movements`;
+
 
   getAll(): Observable<StockMovement[]> {
     return this.http.get<StockMovement[]>(this.apiUrl);
